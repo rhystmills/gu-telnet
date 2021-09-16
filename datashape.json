@@ -1,0 +1,39 @@
+{
+    "collections": [
+        {
+            "displayName": "Headlines",
+            "id": "uk-alpha/news/regular-stories",
+            "content": [
+                {
+                    "headline": "PM continues reshuffle as Dorries addresses MPs as culture secretary",
+                    "trailText": "Latest updates: Boris Johnson expected to continue reshuffling junior ministers as new cabinet begins work",
+                    "thumbnail": "https://i.guim.co.uk/img/media/f9dc407a9e1e3764d25e29da82af45680be91a1d/0_228_3417_2050/500.jpg?quality=85&auto=format&fit=max&s=33ae075231475f780ec69520366bd8fa",
+                    "shortUrl": "https://www.theguardian.com/p/tqf5a",
+                    "id": "politics/live/2021/sep/16/boris-johnson-reshuffle-nadine-dorries-liz-truss-politics-live-news-covid-latest-updates",
+                    "group": "2",
+                    "frontPublicationDate": 1631782041009,
+                    "supporting": []
+                },
+                {
+                    "headline": "NHS aims to deliver over 1m daily Covid and flu jabs in race against time",
+                    "trailText": "Health service to start administering boosters and jabs for children amid growing fears of winter crisis",
+                    "thumbnail": "https://i.guim.co.uk/img/media/a806a0ee5ec05cac45ff243ca1fa75fa02ec3d27/0_192_5760_3456/500.jpg?quality=85&auto=format&fit=max&s=9a4b31bbbd22aa6210502ea133181a66",
+                    "shortUrl": "https://www.theguardian.com/p/tqab4",
+                    "id": "world/2021/sep/16/nhs-aims-to-deliver-over-1m-daily-covid-and-flu-jabs-in-race-against-time",
+                    "group": "2",
+                    "frontPublicationDate": 1631782968516
+                },
+                {
+                    "headline": "US, UK and Australia forge alliance to counter China",
+                    "trailText": "Aukus partnership will enable Australia to have nuclear-powered submarines for the first time",
+                    "thumbnail": "https://i.guim.co.uk/img/media/7a747c45b4a3a71ce03dc090b3807d7613b209ab/0_112_3366_2020/500.jpg?quality=85&auto=format&fit=max&s=6abee2193f0fe33544bfbb6ade371d94",
+                    "shortUrl": "https://www.theguardian.com/p/tq9qc",
+                    "id": "australia-news/2021/sep/15/australia-nuclear-powered-submarines-us-uk-security-partnership-aukus",
+                    "group": "1",
+                    "frontPublicationDate": 1631739701161
+                }
+            ]
+        }
+    ]
+}
+

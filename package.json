@@ -4,13 +4,26 @@
   "keywords": [
     "telnet"
   ],
+  "type": "module",
   "version": "0.0.1",
   "repository": "git://github.com/chjj/node-telnet2.git",
-  "main": "lib/telnet.js",
+  "main": "example.mjs",
   "scripts": {
-    "test": "mocha --reporter spec"
+    "test": "mocha --reporter spec",
+    "start": "nodemon -r esm example.js"
   },
   "devDependencies": {
-    "mocha": "~1.18.2"
+    "mocha": "~1.18.2",
+    "nodemon": "^2.0.12"
+  },
+  "dependencies": {
+    "@babel/core": "^7.15.5",
+    "@babel/preset-env": "^7.15.4",
+    "@babel/preset-react": "^7.14.5",
+    "@babel/register": "^7.15.3",
+    "blessed": "^0.1.81",
+    "esm": "^3.2.25",
+    "react": "^17.0.2",
+    "react-blessed": "^0.7.2"
   }
 }
