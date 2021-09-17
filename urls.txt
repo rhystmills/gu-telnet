@@ -1,0 +1,7 @@
+https://content.guardianapis.com/politics/2021/sep/16/theresa-may-aukus-pact-war-uk-china-taiwan?show-fields=all&format=json&api-key=gnm-hackday-21
+
+http://api.nextgen.guardianapps.co.uk/uk/lite.json
+
+https://api.nextgen.guardianapps.co.uk/environment/lite.json
+
+https://api.nextgen.guardianapps.co.uk/container/data/[containerId].json
