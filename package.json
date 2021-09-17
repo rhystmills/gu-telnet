@@ -23,7 +23,9 @@
     "@babel/register": "^7.15.3",
     "blessed": "^0.1.81",
     "esm": "^3.2.25",
+    "node-fetch": "^3.0.0",
     "react": "^17.0.2",
-    "react-blessed": "^0.7.2"
+    "react-blessed": "^0.7.2",
+    "striptags": "^3.2.0"
   }
 }

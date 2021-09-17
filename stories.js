@@ -1,7 +1,11 @@
+import fetch from 'node-fetch';
+
 export const getFrontPage = () => {
     return fetch('http://api.nextgen.guardianapps.co.uk/uk/lite.json')
-    .then(data => JSON.parse(data))
-    .then(json => json.collections)
+    .then(data => data.json())
+    .then(json => {
+        return json.collections
+    })
     .catch(e => console.log(e))
 }
 
