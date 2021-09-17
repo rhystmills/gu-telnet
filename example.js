@@ -64,12 +64,18 @@ telnet({ tty: true }, (client) => {
   const selectNextLink = (ch, key) => {
     if (activeButton === undefined || activeButton >= buttons.length - 1) {
       activeButton = 0;
-      buttons[activeButton].story.style.bg = '#000000'
-    } else { 
-      buttons[activeButton].story.style.bg = '#000000'
+      if (buttons[activeButton]){
+        buttons[activeButton].story.style.bg = '#000000'
+      }
+    } else {
+      if (buttons[activeButton]){
+        buttons[activeButton].story.style.bg = '#000000'
+      }
       activeButton++;
     }
-    buttons[activeButton].story.style.bg = '#777777'
+    if (buttons[activeButton]){
+      buttons[activeButton].story.style.bg = '#777777'
+    }
     screen.render();
   }
 
@@ -77,13 +83,19 @@ telnet({ tty: true }, (client) => {
     if (activeButton === undefined) {
       activeButton = buttons.length - 1;
     } else if (activeButton === 0){
-      buttons[0].story.style.bg = '#000000'
+      if (buttons[activeButton]){
+        buttons[0].story.style.bg = '#000000'
+      }
       activeButton = buttons.length - 1;
     } else { 
-      buttons[activeButton].story.style.bg = '#000000'
+      if (buttons[activeButton]){
+        buttons[activeButton].story.style.bg = '#000000'
+      }
       activeButton--;
     }
-    buttons[activeButton].story.style.bg = '#777777'
+    if (buttons[activeButton]){
+      buttons[activeButton].story.style.bg = '#777777'
+    }
     screen.render();
   }
 
@@ -184,11 +196,16 @@ telnet({ tty: true }, (client) => {
             }
           }) 
         )
+        offset=0;
+        main.top = -offset;
         screen.render();
       })
   }
 
   const returnHome = () => {
+    offset = 0;
+    main.top = -offset;
+    screen.render();
     for (let i = main.children.length; i > 1; i--){
       main.children[i - 1].destroy();
     }
@@ -219,7 +236,15 @@ telnet({ tty: true }, (client) => {
   });
 
   screen.key(['backspace'], function(ch, key) {
-    if (!home) { 
+    offset = 0;
+    main.top = -offset;
+    screen.render();
+    setTimeout(()=> {
+      offset = 0;
+      main.top = -offset;
+      screen.render();
+    }, 1000)
+    if (!home) {
       returnHome();
     }
   });
@@ -326,92 +351,193 @@ telnet({ tty: true }, (client) => {
         collection => collection.displayName && collection.content.length > 0
       )
       // console.log(validCollections)
-      let currentSectionOffset = 0; 
       
-      validCollections.forEach((collection, i) => {
-        const sectionOffset = Math.round(collection.content.length/2) * 10;
-        fetch('https://api.nextgen.guardianapps.co.uk/container/data/' + collection.id + '.json')
-        .then(response => response.json())
+      const collectionsDataPromises = validCollections.map((collection) => {
+        const controller = new AbortController()
+
+        // 2 second timeout:
+        const timeoutId = setTimeout(() => controller.abort(), 2000)
+        return fetch(
+          'https://api.nextgen.guardianapps.co.uk/container/data/' + collection.id + '.json', 
+          { signal: controller.signal })
+          .then(response => response.json())
+        }
+      )
+
+
+      Promise.allSettled(collectionsDataPromises)
+        .then(data => data.map(result => result.value))
         .then(containerData => {
-          // console.log(containerData.heading)
-          feed.append(blessed.box({ 
-            top: i * 10,
-            // right: 0,
-            left: 0,
-            width: 'shrink',
-            height: 'shrink',
-            content: collection.displayName.toUpperCase(),
-            padding: 0,
-            style: {
-              fg: 'white',
-            }
-          }))
-
-          feed.append(blessed.line({ 
-            top: (i * 10 + 1),
-            // right: 0,
-            orientation: 'horizontal',
-            type: 'line',
-            fg: '#f0f0f0'
-          }))
-
-          const thisCollection = blessed.box({ 
-            top: i * 10 + 2,
-            // right: 0,
-            left: 0,
-            width: '100%',
-            height: 8,
-            padding: 0,
-            style: {
-              fg: 'white',
-            }
-          })
-          feed.append(thisCollection);
-          
-          collection.content.forEach((story, j)=>{
-            if (j<2){
-              // console.log(story.id)
-              const color = colorMap(story.id);
-              const kickerText = () => {
-                if (containerData.trails && containerData.trails[j] && containerData.trails[j].kickerText){
-                  return `{${color}-fg}${containerData.trails[j].kickerText} /{/${color}-fg} `
-                }
-                return '';
+          let currentSectionOffset = 0; 
+          validCollections.forEach((collection, i) => {
+            const sectionOffset = (Math.round((collection.content.length)/2) * 4) + 2;
+            // console.log(containerData.heading)
+            feed.append(blessed.box({ 
+              top: currentSectionOffset,
+              // right: 0,
+              left: 0,
+              width: 'shrink',
+              height: 'shrink',
+              content: collection.displayName.toUpperCase(),
+              padding: 0,
+              style: {
+                fg: 'white',
               }
-              const thisStory = blessed.box({ 
-                top: 'top',
-                // right: 0,
-                left: j % 2 === 0 ? 0 : '50%',
-                // left: 0,
-                mouse: true,
-                width: '50%',
-                tags: true,
-                height: 'shrink',
-                content: `${kickerText()}${story.headline}`,
-                padding: 0,
-                border: {
-                  type: 'line',
-                  fg: '#aaaaaa'
-                },
-                style: {
-                  fg: 'white',
-                  hover: {
-                    bg: 'green'
+            }))
+
+            feed.append(blessed.line({ 
+              top: (currentSectionOffset + 1),
+              // right: 0,
+              orientation: 'horizontal',
+              type: 'line',
+              fg: '#f0f0f0'
+            }))
+
+            const thisCollection = blessed.box({ 
+              top: currentSectionOffset + 2,
+              // right: 0,
+              left: 0,
+              width: '100%',
+              height: 8,
+              padding: 0,
+              style: {
+                fg: 'white',
+              }
+            })
+            feed.append(thisCollection);
+            currentSectionOffset += sectionOffset
+            collection.content.forEach((story, j)=>{
+              if (j<50){
+                // console.log(story.id)
+                const color = colorMap(story.id);
+                const kickerText = () => {
+                  const activeSection = containerData.find(container => container.displayName === collection.displayName)
+                  const activeStory = activeSection.trails.find(thisStory => thisStory.headline === story.headline)
+                  if (activeStory && activeStory.kickerText){
+                    return `{${color}-fg}${activeStory.kickerText} /{/${color}-fg} `
                   }
+                  return '';
                 }
-              })
-              thisStory.id = story.id;
-              buttons.push({story: thisStory, id: story.id});
-              // console.log(story.headline)
-            
-              thisCollection.append(thisStory)
-            }
+                const thisStory = blessed.box({ 
+                  top: (Math.round(0.5 * (j + 1)) - 1) * 4,
+                  // right: 0,
+                  left: j % 2 === 0 ? 0 : '50%',
+                  // left: 0,
+                  mouse: true,
+                  width: '50%',
+                  tags: true,
+                  height: 'shrink',
+                  content: `${kickerText()}${story.headline}`,
+                  padding: 0,
+                  border: {
+                    type: 'line',
+                    fg: '#aaaaaa'
+                  },
+                  style: {
+                    fg: 'white',
+                    hover: {
+                      bg: 'green'
+                    }
+                  }
+                })
+                thisStory.id = story.id;
+                buttons.push({story: thisStory, id: story.id});
+                // console.log(story.headline)
+              
+                thisCollection.append(thisStory)
+              }
+            })
+            offset=0;
+            main.top = -offset;
+            screen.render();
           })
-          screen.render();
+          // validCollections.forEach((collection, i) => {
+          //   const sectionOffset = Math.round(collection.content.length/2) * 10;
+          //   fetch('https://api.nextgen.guardianapps.co.uk/container/data/' + collection.id + '.json')
+          //   .then(response => response.json())
+          //   .then(containerData => {
+          //     // console.log(containerData.heading)
+          //     feed.append(blessed.box({ 
+          //       top: i * 10,
+          //       // right: 0,
+          //       left: 0,
+          //       width: 'shrink',
+          //       height: 'shrink',
+          //       content: collection.displayName.toUpperCase(),
+          //       padding: 0,
+          //       style: {
+          //         fg: 'white',
+          //       }
+          //     }))
+
+          //     feed.append(blessed.line({ 
+          //       top: (i * 10 + 1),
+          //       // right: 0,
+          //       orientation: 'horizontal',
+          //       type: 'line',
+          //       fg: '#f0f0f0'
+          //     }))
+
+          //     const thisCollection = blessed.box({ 
+          //       top: i * 10 + 2,
+          //       // right: 0,
+          //       left: 0,
+          //       width: '100%',
+          //       height: 8,
+          //       padding: 0,
+          //       style: {
+          //         fg: 'white',
+          //       }
+          //     })
+          //     feed.append(thisCollection);
+              
+          //     collection.content.forEach((story, j)=>{
+          //       if (j<2){
+          //         // console.log(story.id)
+          //         const color = colorMap(story.id);
+          //         const kickerText = () => {
+          //           if (containerData.trails && containerData.trails[j] && containerData.trails[j].kickerText){
+          //             return `{${color}-fg}${containerData.trails[j].kickerText} /{/${color}-fg} `
+          //           }
+          //           return '';
+          //         }
+          //         const thisStory = blessed.box({ 
+          //           top: 'top',
+          //           // right: 0,
+          //           left: j % 2 === 0 ? 0 : '50%',
+          //           // left: 0,
+          //           mouse: true,
+          //           width: '50%',
+          //           tags: true,
+          //           height: 'shrink',
+          //           content: `${kickerText()}${story.headline}`,
+          //           padding: 0,
+          //           border: {
+          //             type: 'line',
+          //             fg: '#aaaaaa'
+          //           },
+          //           style: {
+          //             fg: 'white',
+          //             hover: {
+          //               bg: 'green'
+          //             }
+          //           }
+          //         })
+          //         thisStory.id = story.id;
+          //         buttons.push({story: thisStory, id: story.id});
+          //         // console.log(story.headline)
+                
+          //         thisCollection.append(thisStory)
+          //       }
+          //     })
+          //     screen.render();
+          //   })
+          //   screen.render();
+          // })
         })
-        screen.render();
-      })
       // console.log(list.children.map(item => item.content))
+      offset=0;
+      main.top = -offset;
       main.screen.render();
       screen.render();
     }) 

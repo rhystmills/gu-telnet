@@ -1,12 +1,12 @@
 {
   "name": "telnet2",
-  "description": "Telnet implementation for Node.js based on node-telnet",
+  "description": "The Guardian for telnet",
   "keywords": [
     "telnet"
   ],
   "type": "module",
   "version": "0.0.1",
-  "repository": "git://github.com/chjj/node-telnet2.git",
+  "repository": "git://github.com/guardian/gu-telnet",
   "main": "example.mjs",
   "scripts": {
     "test": "mocha --reporter spec",
@@ -23,6 +23,7 @@
     "@babel/register": "^7.15.3",
     "blessed": "^0.1.81",
     "esm": "^3.2.25",
+    "node-abort-controller": "^3.0.0",
     "node-fetch": "^3.0.0",
     "react": "^17.0.2",
     "react-blessed": "^0.7.2",

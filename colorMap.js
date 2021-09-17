@@ -12,7 +12,6 @@ export const colorMap = (id) => {
         { name: 'food', color: "#af5f87" },
     ]
     const firstIdSection = id.substring(0, id.indexOf('/'));
-    console.log(firstIdSection)
 
     const possibleColor = colorMap.find(item => item.name === firstIdSection)
     if (possibleColor) { 
